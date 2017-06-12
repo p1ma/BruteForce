@@ -2,17 +2,16 @@
 CC = gcc
 
 # definition des options de compilation pour obtenir un fichier .o
-PRODUCTFLAGS = -c -O3 -Wall
+PRODUCTFLAGS = -c -g -O3 -Wall
 ENDFLAGS = -lm -lOpenCL
 
-# definition des options de compilation pour obtenir un fichier .do
-DEBUGFLAGS = -c -g -O3 
-
 # Fichier executable server
-bruteforce: main.o
-	$(CC) -o bruteForce main.o $(ENDFLAGS)
-main.o: main.c 
+bruteForce: bruteforce.o main.o
+	$(CC) -o bruteForce bruteforce.o main.o $(ENDFLAGS)
+main.o: main.c bruteforce.h
 	$(CC) $(PRODUCTFLAGS) main.c 
+bruteforce.o: bruteforce.c bruteforce.h
+	$(CC) $(PRODUCTFLAGS) bruteforce.c
 
 # cleaner
 clean :
