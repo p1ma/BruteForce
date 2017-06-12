@@ -16,13 +16,22 @@ const char END_CHARACTER = 'z';
 
 
 /* METHODS SIGNATURES */
-void error_cpu(void *); // call in case of error in bruteforce_cpu
-void alloc_chain(char **, const int); // alloc a char* chain
-void init_chain(char *, const int, const char); // init a char* chain
-int generate_possibilities_at(char *, const char, const char,const int); // generate all possibilities at int pos from char*
-int bruteforce_cpu(const char, const char, const int); // 0 if success else -1
+
+// call in case of error in bruteforce_cpu
+void error_cpu(void *);
+
+// alloc a char* chain
+void alloc_chain(char **, const int);
+
+// init a char* chain
+void init_chain(char *, const int, const char);
+
+// generate all possibilities at int pos from char*
+int generate_possibilities_at(char *, const char, const char,const int);
 
 /* METHODS DECLARATIONS */
+
+// call in case of error in bruteforce_cpu
 void error_cpu(void *ptr) {
   if (ptr != NULL) {
     free(ptr);
@@ -31,12 +40,14 @@ void error_cpu(void *ptr) {
   exit(EXIT_FAILURE);
 }
 
+// alloc a char* chain
 void alloc_chain(char **chain, const int s_chain) {  
   if (*chain == NULL) {
     *chain = (char *)malloc(sizeof(char) * (s_chain + 1));
   }
 }
 
+// init a char* chain
 void init_chain(char *chain, const int s_chain, const char start) {  
   if (chain != NULL) {
     for (int i = 0; i < s_chain ; i++) chain[i] = start;
@@ -45,6 +56,7 @@ void init_chain(char *chain, const int s_chain, const char start) {
   }
 }
 
+// generate all possibilities at int pos from char*
 int generate_possibilities_at(char *chain, const char start, const char end, const int pos) {
   if (pos < 0 || pos > strlen(chain)) {
     error_cpu(chain);
@@ -60,50 +72,10 @@ int generate_possibilities_at(char *chain, const char start, const char end, con
   return (int)c;
 }
 
-int bruteforce_cpu(const char start, const char end, const int size) {
-  // variables
-  int res = EXIT_SUCCESS;
-  unsigned int nb_characters = (int)(end - start + 1);
-  unsigned long long int possibilities = 0;
-  unsigned long long int attempt = 0;
-  unsigned int position = size - 1;
-  char *passwd = NULL;
-
-  // alloc passwd
-  alloc_chain(&passwd, size);
-
-  // init passwd
-  init_chain(passwd, size, start);
-
-  // calculate all possibilities
-  possibilities = pow(nb_characters, size);
-
-  // print possibilities
-  printf("Number of possibilities: %llu.\n", possibilities);
-
-  // bruteforce loop
-  for(int pos = position ; pos >= 0; pos--) {
-    for(int pos_after = (size - 1); pos_after >= pos ; pos_after--) {
-      for(int c = (int)start; c <= (int) end; c++) {
-	attempt += generate_possibilities_at(passwd, start, end, pos_after);
-	init_chain(passwd, size, c);
-      }
-    }
-  }
-
-  printf("Brute force over, %llu attempts done.\n", attempt);
-  
-  // free memory
-  free(passwd);
-
-  // exit
-  return res;
-}
 
 /* main method */
 int main(int argc, char *argv[]) {
   // variables
-  int res = EXIT_FAILURE;
   clock_t start_t = 0,
     end_t = 0,
     time_t = 0;
@@ -111,7 +83,7 @@ int main(int argc, char *argv[]) {
   start_t = clock();
   
   // calculate all password possibilities
-  res = bruteforce_cpu(START_CHARACTER, END_CHARACTER, S_PASSWD);
+  // todo...
   
   end_t = clock();
 
@@ -120,6 +92,6 @@ int main(int argc, char *argv[]) {
   printf("Time taken by CPU: %ld second(s).\n", time_t);
   
   // returns SUCCESS | FAILURE
-  return res;
+  return EXIT_SUCCESS;
 }
   
