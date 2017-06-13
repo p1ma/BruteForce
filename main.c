@@ -30,6 +30,9 @@ int main(int argc, char *argv[]) {
     
     const unsigned int s_passwd = atoi(argv[1]);
 
+    // init ptr
+    g_passwd = (char *)malloc(sizeof(char) * (s_passwd + 1));
+    
     // returns and prints on stdout the number of possibilities
     possibilities = print_number_of_possibilities(s_passwd);
 
@@ -41,10 +44,6 @@ int main(int argc, char *argv[]) {
 
     // if error happened then ..
     if (attempt == -1) goto clean;
-
-    //if (attempt != possibilities) printf("Error bruteforcing..."); goto Clean;
-
-    printf("Attempts done: %lld\n", attempt);
 
     // end timer
     end_t = clock();
@@ -58,7 +57,7 @@ int main(int argc, char *argv[]) {
   }
 
   // clean memory
- clean:
+ clean :
   free(g_passwd);
   
   // returns status

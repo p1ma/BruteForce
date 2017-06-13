@@ -6,9 +6,7 @@ extern const char START_CHARACTER; // \s
 extern const char END_CHARACTER; // ~
 
 /* METHODS SIGNATURE */
-extern int alloc_ptr (char **ptr,
-		     const unsigned int size);
-extern int init_ptr (char **ptr,
+extern int init_ptr (char *ptr,
 		    const unsigned int size,
 		    const char init_character);
 extern int generate_passwd_at(char *passwd,

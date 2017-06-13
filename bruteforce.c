@@ -9,39 +9,22 @@ const char END_CHARACTER = 0x7E; // ~
 
 /* METHODS DECLARATION */
 
-int alloc_ptr (char **ptr,
-	      const unsigned int size) {
-  int status = 0; // success
-  
-  *ptr = (char *)malloc(sizeof(char) * (size + 1)); // + 1 bcs '\0'
-  
-  // check if success
-  if (*ptr == NULL) {
-    status = -1; // failure
-    free(*ptr);
-    printf("no failure");
-  }
-  
-  return status;
-}
-
-int init_ptr (char **ptr,
+int init_ptr (char *ptr,
 	     const unsigned int size,
 	     const char init_character) {
-  int status = 0; // success
+  int status = -1; // failure
   
-  if (*ptr == NULL) {
-    status = alloc_ptr(ptr, size);
-    if (status == -1) {
+  if (ptr == NULL) {
       return status; // failure
-    }
   }
   
-  char *passwd = *ptr;
+  char *passwd = ptr;
   for (int index = 0 ; index < size ; index++) {
     passwd[index] = init_character;
   }
   passwd[size] = 0x00;
+  passwd = NULL;
+  status = 0;
   
   return status;
 }
@@ -60,8 +43,9 @@ int generate_passwd_at(char *passwd,
 int bruteforce (char *passwd, const unsigned int size) {
   // check if passwd is NULL or not
   if (passwd == NULL) {
-    int st = init_ptr(&passwd, size, START_CHARACTER);
-    if (st == -1) return -1;
+    int st = init_ptr(passwd, size, START_CHARACTER);
+    
+    if (st == -1) return st; 
   }
   
   // variables and constant
@@ -72,7 +56,6 @@ int bruteforce (char *passwd, const unsigned int size) {
   while (start_pos >= 0) {
     break;
   }
-  
   return attempt;
 }
 
