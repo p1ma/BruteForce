@@ -28,16 +28,19 @@ int main(int argc, char *argv[]) {
       time_t = 0;
     long long int attempt = 0;
     long long int possibilities = 0;
+    int status = 0;
     
     const unsigned int s_passwd = atoi(argv[2]);
 
     // init ptrs
     g_passwd = (char *)malloc(sizeof(char) * (s_passwd + 1));
-    int status = init_ptr(g_passwd,
-			  s_passwd,
-			  START_CHARACTER);
+    status = init_ptr(g_passwd,
+		      s_passwd,
+		      START_CHARACTER);
+    // if error then clean and exit
     if (status == -1) goto clean;
-    
+
+    // output file
     g_file = fopen(argv[1], "a+");
     
     // returns and prints on stdout the number of possibilities
@@ -47,25 +50,21 @@ int main(int argc, char *argv[]) {
     start_t = clock(); 
     
     // calculate all password possibilities
-    while ( has_next(g_passwd, s_passwd, END_CHARACTER) ) {
-      // calc possibilities
-      g_passwd = next(g_passwd,
-		      s_passwd,
-		      START_CHARACTER,
-		      END_CHARACTER);
-      
-      // write g_passwd into g_file
-      fwrite(g_passwd,
-	     (size_t)(s_passwd + 1),
-	     (size_t)1, g_file);
-      break;
-    }
-    
-    //attempt = bruteforce(g_passwd, s_passwd);
+    attempt = bruteforce(g_passwd,
+			 s_passwd,
+			 START_CHARACTER,
+			 END_CHARACTER,
+			 g_file);
 
     // if error happened then ..
     if (attempt == -1) goto clean;
 
+    // if all passwd were not find then error
+    if (attempt != possibilities) {
+      printf("Error bruteforcing...\n");
+      goto clean;
+    }
+    
     // end timer
     end_t = clock();
 

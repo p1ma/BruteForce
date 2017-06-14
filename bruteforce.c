@@ -1,7 +1,6 @@
 #include "bruteforce.h" // bruteforce header
 #include <stdlib.h> // malloc(), free()
 #include <math.h> // pow()
-#include <stdio.h> // printf()
 
 /* CONSTANTS */
 const char START_CHARACTER = 0x20; // Space
@@ -30,35 +29,75 @@ int init_ptr (char *ptr,
 }
 
 bool has_next(char *passwd,
-	      const unsigned int size,
+	      unsigned int position,
 	      const char end_character) {
   
-  for (int index = 0; index < size; index++) {
+  for (int index = 0; index < position; index++) {
     if (passwd[index] != end_character) return true;
   }
   return false;
 }
 
 char *next(char *passwd,
-	   const int size,
+	   int position,
 	   const char start_character,
 	   const char end_character) {
+  if (passwd[position] == end_character) {
+    if (position < 0) {
+      return passwd;
+    } else {
+      passwd[position] = start_character;
+      return next(passwd, position - 1, start_character, end_character);
+    }
+  } else {
+    passwd[position] += 0x01;
+  }
   return passwd;
 }
 
-int bruteforce (char *passwd, const unsigned int size) {
+int bruteforce (char *passwd,
+		const unsigned int size,
+		const char start_character,
+		const char end_character,
+		FILE *output) {
+  int status = 0;
   // check if passwd is NULL or not
   if (passwd == NULL) {
-    int st = init_ptr(passwd, size, START_CHARACTER);
+    status = init_ptr(passwd, size, START_CHARACTER);
     
-    if (st == -1) return st; 
+    if (status == -1) return status; 
+  }
+
+  // check if output is valid
+  if (output == NULL) {
+    status = -1;
+    return status;
   }
   
   // variables and constant
   const int pos_max = size;
-  int start_pos = pos_max - 1;
-  long long int attempt = 0;
-  printf("start_pos: %d, pos_max: %d\n", start_pos, pos_max);
+  int starter_pos = pos_max - 1;
+  long long int attempt = 1;
+
+  // bruteforce loop
+  while (has_next(passwd, pos_max, end_character)) {
+    // print passwd
+    //printf("passwd: %s\n", passwd);
+
+    // write passwd into output
+    fprintf(output, "%s\n", passwd);
+
+    // calc the next passwd
+    passwd = next(passwd, starter_pos, start_character, end_character);
+    attempt++;
+  }
+  
+  // print the last one
+  //printf("passwd: %s\n", passwd);
+
+  // write passwd into output
+  fprintf(output, "%s\n", passwd);
+  
   return attempt;
 }
 
